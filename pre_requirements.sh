@@ -44,3 +44,13 @@ sudo mv ./kubectl /usr/local/bin/kubectl
 kubectl version --client
 
 
+cat <<EOF
+############################################################
+## Install Helm ############################################
+############################################################
+EOF
+wget https://get.helm.sh/helm-v3.2.4-linux-amd64.tar.gz
+tar -zxvf helm-v3.2.4-linux-amd64.tar.gz
+sudo mv linux-amd64/helm /usr/local/bin
+rm helm-v3.2.4-linux-amd64.tar.gz 
+rm -rf linux-amd64
