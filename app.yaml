@@ -1,0 +1,51 @@
+---
+apiVersion: apps/v1   # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: prom-http-simulator
+  labels:
+    app: prom-http-simulator
+spec:
+  selector:
+    matchLabels:
+      app: prom-http-simulator
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: prom-http-simulator
+    spec:
+      containers:
+      - image: pierrevincent/prom-http-simulator:0.1
+        name: http-metrics 
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prom-http-simulator
+  labels:
+    app: prom-http-simulator
+spec:
+  ports:
+    - name: web
+      port: 80
+      targetPort: 8080
+  selector:
+    app: prom-http-simulator
+  type: LoadBalancer
+
+---
+# https://github.com/coreos/prometheus-operator/blob/master/Documentation/user-guides/running-exporters.md
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: prom-http-simulator
+spec:
+  selector:
+    matchLabels:
+      app: prom-http-simulator
+  endpoints:
+  - port: web
