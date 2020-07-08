@@ -22,6 +22,13 @@ helm install --namespace monitoring --name-template monitoring stable/prometheus
 
 cat <<EOF
 ############################################################
+## Import the custom settings ##############################
+############################################################
+EOF
+helm upgrade -n monitoring -f prometheusValues.yaml monitoring stable/prometheus-operator
+
+cat <<EOF
+############################################################
 ## You can access Prometheus after running below command: ##
 ############################################################
 kubectl --namespace monitoring port-forward services/prometheus-operated $PROMETHEUS_LOCAL_PORT
