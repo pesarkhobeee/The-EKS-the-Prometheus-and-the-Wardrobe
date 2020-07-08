@@ -28,6 +28,7 @@ metadata:
   name: prom-http-simulator
   labels:
     app: prom-http-simulator
+    prometheus: scrape
 spec:
   ports:
     - name: web
@@ -42,10 +43,10 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: prom-http-simulator
+  name: prometheus-automatic-scraper
 spec:
   selector:
     matchLabels:
-      app: prom-http-simulator
+      prometheus: scrape
   endpoints:
   - port: web
