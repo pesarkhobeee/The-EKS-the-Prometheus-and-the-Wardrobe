@@ -31,7 +31,7 @@ aws configure
 Alright, we are ready to finally set up our AWS EKS by the help of Terraform, it will take around 15 minutes:
 
 ```
-cd learn-terraform-pr******************************************************ovision-eks-cluster
+cd learn-terraform-provision-eks-cluster
 terraform init
 terraform apply
 ```
@@ -88,5 +88,21 @@ kubectl --namespace monitoring port-forward services/monitoring-grafana 9091:80
 ############################################################
 prom-operator
 ```
+
+If you run two port forward commands, you will access to the Prometheus and Grafana on your local host:
+http://127.0.0.1:9090
+http://127.0.0.1:9091
+
+## Setup the test App:
+
+We are deploying [prom-http-simulator](https://hub.docker.com/r/pierrevincent/prom-http-simulator/) to our cluster as the test case:
+
+```
+kubectl apply -f app.yaml
+watch kubectl get all
+```
+
+At the end you can see a URL for `service/prom-http-simulator` in `EXTERNAL-IP` which you can add `/metrics` to the end of that to test it, something like this:
+http://a939236295ce940c79a695c12e3420b0-1104090714.eu-central-1.elb.amazonaws.com/metrics
 
 
