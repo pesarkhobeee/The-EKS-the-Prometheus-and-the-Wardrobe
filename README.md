@@ -4,7 +4,7 @@ Here we setup AWS-EKS and Prometheus as our playground to learn more!
 
 *****Attention:** If you are looking to setup a production-grade Kubernetes cluster on AWS this is not the solution, please read [this](https://gruntwork.io/guides/kubernetes/how-to-deploy-production-grade-kubernetes-cluster-aws/#kubernetes-architecture) article.
 
-## Setting up EKS:
+## Setup EKS:
 
 We are followin [this hashicorp article](https://learn.hashicorp.com/terraform/kubernetes/provision-eks-cluster) which will help us to set up an experimental EKS, in the time that I was trying to use it there was a bug inside it that they didn't fix, therefore, you can find a clone of it here without any problem, let's go to the steps:
 
@@ -25,13 +25,13 @@ The next step as it was written in the script output is:
 Please go to this link and define a new access key:
 https://console.aws.amazon.com/iam/home?#/security_credentials
 Then run:
-aws configure 
+aws configure
 ```
 
 Alright, we are ready to finally set up our AWS EKS by the help of Terraform, it will take around 15 minutes:
 
 ```
-cd learn-terraform-pr*********************************************************ovision-eks-cluster 
+cd learn-terraform-pr******************************************************ovision-eks-cluster
 terraform init
 terraform apply
 ```
@@ -51,3 +51,42 @@ You can view these outputs again by running:
 ```
 terraform output
 ```
+
+At the end you should be able to see three nodes by running:
+
+```
+kubectl get nodes
+```
+
+## Setup Prometheus:
+
+We are using Helm to setup [Prometheus operator](https://github.com/helm/charts/tree/master/stable/prometheus-operator) on our K8s cluster, I have created a script to make it simple, just run:
+
+```
+./monitoring.sh
+```
+
+After running this script you can see how you can go further, some output like these:
+
+```
+NOTES:
+The Prometheus Operator has been installed. Check its status by running:
+  kubectl --namespace monitoring get pods -l "release=monitoring"
+
+Visit https://github.com/coreos/prometheus-operator for instructions on how
+to create & configure Alertmanager and Prometheus instances using the Operator.
+############################################################
+## You can access Prometheus after running below command: ##
+############################################################
+kubectl --namespace monitoring port-forward services/prometheus-operated 9090
+############################################################
+## You can access Grafana after running below command:    ##
+############################################################
+kubectl --namespace monitoring port-forward services/monitoring-grafana 9091:80
+############################################################
+## Grafana's Admin user password: ##########################
+############################################################
+prom-operator
+```
+
+
