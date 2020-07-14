@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - image: pierrevincent/prom-http-simulator:0.1
-        name: http-metrics 
+        name: http-metrics
         ports:
         - containerPort: 8080
 ---
@@ -28,7 +28,11 @@ metadata:
   name: prom-http-simulator
   labels:
     app: prom-http-simulator
+    tier: frontend
     prometheus: scrape
+    k8s-app: kube-state-metrics
+  annotations:
+    alpha.monitoring.coreos.com/non-namespaced: "true"
 spec:
   ports:
     - name: web
@@ -39,14 +43,41 @@ spec:
   type: LoadBalancer
 
 ---
-# https://github.com/coreos/prometheus-operator/blob/master/Documentation/user-guides/running-exporters.md
+#https://github.com/coreos/prometheus-operator/blob/master/Documentation/user-guides/running-exporters.md
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: prometheus-automatic-scraper
+  labels:
+    k8s-apps: httpweb
+    prometheus: kube-prometheus
 spec:
+  namespaceSelector:
+    matchNames:
+    - default
+    - kube-system
+    - monitoring
   selector:
     matchLabels:
-      prometheus: scrape
+      app: prom-http-simulator
   endpoints:
   - port: web
+#apiVersion: monitoring.coreos.com/v1
+#kind: ServiceMonitor
+#metadata:
+#  name: k8s-apps-http
+#  labels:
+#    k8s-apps: httpweb
+#    prometheus: kube-prometheus
+#spec:
+#  jobLabel: k8s-app
+#  selector:
+#    matchExpressions:
+#    - {key: k8s-app, operator: Exists}
+#  namespaceSelector:
+#    matchNames:
+#    - kube-system
+#    - monitoring
+#  endpoints:
+#  - port: http-metrics
+#    interval: 15s

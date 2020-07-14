@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  creationTimestamp: null
+  name: prometheus-example-rules
+  labels:
+    app: prometheus-operator
+spec:
+  groups:
+  - name: alertmanager.rules
+    rules:
+    - alert: prom_http_simulator_http_request_duration
+      expr: http_request_duration_milliseconds_sum/1000000 > 200
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Prometheus HTTP Metrics Request latency (instance {{ $labels.instance }})"
+        description: "Request latency is too high\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"

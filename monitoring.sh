@@ -18,14 +18,14 @@ helm repo update
 kubectl create namespace monitoring
 helm install --namespace monitoring --name-template monitoring stable/prometheus-operator \
 --set kubelet.serviceMonitor.https=true \
---set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false
+--set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false \
+--set prometheus.prometheusSpec.ruleSelectorNilUsesHelmValues=false
 
 cat <<EOF
 ############################################################
 ## Import the custom settings ##############################
 ############################################################
 EOF
-helm upgrade -n monitoring -f prometheusValues.yaml monitoring stable/prometheus-operator
 
 cat <<EOF
 ############################################################

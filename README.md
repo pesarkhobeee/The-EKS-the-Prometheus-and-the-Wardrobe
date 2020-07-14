@@ -106,3 +106,27 @@ At the end you can see a URL for `service/prom-http-simulator` in `EXTERNAL-IP` 
 http://a939236295ce940c79a695c12e3420b0-1104090714.eu-central-1.elb.amazonaws.com/metrics
 
 
+## Alerts:
+
+With the help of the URL which we got in the last section we can trigger our deployed App internal mechanism "Spike Mode", Under spike mode, the number of requests is multiplied by a factor between 5 and 15, and latency is doubled, to do that replace your URL in the below script:
+
+```
+while true; do curl -X POST http://a303658911a2d45cda255980826c2305-695049560.eu-central-1.elb.amazonaws.com/spike/on; sleep 1; done
+```
+
+Now you should deploy an alert for that:
+
+```
+kubectl apply -n monitoring -f alerts.yaml
+```
+
+And after that you should be able to see that alert in the prometheus and AlertManager:
+
+```
+kubectl --namespace monitoring port-forward service/monitoring-prometheus-oper-alertmanager 9093&
+kubectl --namespace monitoring port-forward services/prometheus-operated 9090&
+```
+
+![Prometheus](https://raw.github.com/pesarkhobeee/The-EKS-the-Prometheus-and-the-Wardrobe/master/prometheus.png)
+
+![AlertManager](https://raw.github.com/pesarkhobeee/The-EKS-the-Prometheus-and-the-Wardrobe/master/alertmanager.png)
